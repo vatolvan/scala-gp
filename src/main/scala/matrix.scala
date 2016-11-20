@@ -10,8 +10,8 @@ import org.ejml.factory._
 class Matrix(val i: Int, val j: Int, val d : Array[Array[Double]], val o: Boolean, val m: SimpleMatrix) {
     val M = if (o) m else new SimpleMatrix(d);
     
-    val nrow = i;
-    val ncol = j;
+    val nrow = i
+    val ncol = j
   
     def this(i: Int, j: Int) = this(i, j, Array.ofDim[Double](i,j), false, null)
     

@@ -1,5 +1,6 @@
 package scalagp
 import org.ejml.simple._
+import java.io.File
 
 object Util {
     
@@ -13,4 +14,13 @@ object Util {
         val M2 = new Matrix(n, n, null, true, SimpleMatrix.identity(n))
         return M2
     }
+
+    def getListOfFiles(dir: String):List[File] = {
+		val d = new File(dir)
+		if (d.exists && d.isDirectory) {
+			d.listFiles.filter(_.isFile).toList
+		} else {
+			List[File]()
+		}
+	}
 }

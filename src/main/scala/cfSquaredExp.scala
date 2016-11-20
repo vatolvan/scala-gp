@@ -1,6 +1,6 @@
 package scalagp
 
-class cfSquaredExp(val x: Array[Double], l: Double = 0.2, m: Double = 0.1) {  
+class cfSquaredExp(val x: Array[Double], l: Double = 2, m: Double = 0.1) {
     var lengthScale = l
     var magnSigma2 = m
     val K = computeCovariance(x, x)  

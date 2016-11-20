@@ -7,9 +7,9 @@ class gp(val x: Array[Double], val ya : Array[Double]) {
   
   val y = new Matrix(ya.map(yy => Array(yy))) 
   
-  var noiseSigma2 = 0.5;
+  var noiseSigma2 = 0.1;
   
-  def predict(xt : Array[Double]): Array[Double] = {
+  def predict(xt : Array[Double]): Array[Array[Double]] = {
         val n = y.nrow;
         val N = Util.identityMatrix(n)*noiseSigma2;
         val Kstar = cf.computeCovariance(xt, x)
@@ -19,9 +19,15 @@ class gp(val x: Array[Double], val ya : Array[Double]) {
         
         // t = K(x,xt)*inv(K(x,x) + noise)*y
         val t = Kstar * (L.transpose()\a);
+
+        // C = K(xt,xt) - K(xt,x)*inv(K(x,x))*K(x,xt)
+        val tmp2 = L\Kstar.transpose()
+        val C = (Kstarstar - tmp2.transpose()*tmp2).diag();
+        println(C.get(0))
         
         val id = (0 to xt.length-1).toArray
-        val tt = id.map(p => t.get(p))
+        val tt = id.map(p => Array(t.get(p), C.get(p)))
+        println(tt(0)(0) + ", " + tt(0)(1))
         return tt
     }
    
@@ -59,8 +65,10 @@ class gp(val x: Array[Double], val ya : Array[Double]) {
       this.noiseSigma2 = n + eps;
       val d1 = this.energy();      
       this.noiseSigma2 = n - eps;
-      val d2 = this.energy();      
-      val ng = (d1-d2)/(2*eps);
+      val d2 = this.energy();
+      val ng = 0;
+      //val ng = (d1-d2)/(2*eps);
+
       
       this.setCfParameters(l+eps, m);
       val dl1 = this.energy();      
