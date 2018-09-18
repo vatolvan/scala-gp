@@ -7,7 +7,7 @@ class gp(val x: Array[Double], val ya : Array[Double]) {
 
   val y = new Matrix(ya.map(yy => Array(yy)))
 
-  var noiseSigma2 = 0.1;
+  var noiseSigma2 = 0.2;
 
   def predict(xt : Array[Double]): Array[Array[Double]] = {
         val n = y.nrow;
@@ -86,30 +86,31 @@ class gp(val x: Array[Double], val ya : Array[Double]) {
       return Array(ng,lg,mg);
     }
 
-    def optimizeParameters2() = {
-      var n = this.noiseSigma2
-      var l = this.cf.lengthScale
-      var m = this.cf.magnSigma2
+    def optimizeParameters(): Array[Double] = {
+        var n = this.noiseSigma2
+        var l = this.cf.lengthScale
+        var m = this.cf.magnSigma2
 
 
-      var e = this.energy(Array(n,l,m));
-      var g = this.energy_gradient(Array(n,l,m));
-      var preve = e + 1;
-      val diff = 1e-6;
+        var e = this.energy(Array(n,l,m));
+        var g = this.energy_gradient(Array(n,l,m));
+        var preve = e + 1;
+        val diff = 1e-6;
 
-      println("Energy = " + e + ", noiseSigma2 = " + n + ", lengthScale = " + l + ", magnSigma2 = " + m);
-      var s = 0.0
-      var i = 0;
-      while (e < preve - diff) {
-        i = i + 1
-        preve = e
-        s = Util.lineSearch(this.energy, Array(-g(0), -g(1), -g(2)), Array(n,l,m), 1)
-        n = n - s*g(0)
-        l = l - s*g(1)
-        m = m - s*g(2)
-        e = this.energy(Array(n,l,m))
-        g = this.energy_gradient(Array(n,l,m))
-        println("Iter = " + i + ", Energy = " + f"$e%1.5f" + ", noiseSigma2 = " + f"$n%1.5f" + ", lengthScale = " + f"$l%1.5f" + ", magnSigma2 = " + f"$m%1.5f");
-      }
+        println("Energy = " + e + ", noiseSigma2 = " + n + ", lengthScale = " + l + ", magnSigma2 = " + m);
+        var s = 0.0
+        var i = 0;
+        while (e < preve - diff) {
+            i = i + 1
+            preve = e
+            s = Util.lineSearch(this.energy, Array(-g(0), -g(1), -g(2)), Array(n,l,m), 1)
+            n = n - s*g(0)
+            l = l - s*g(1)
+            m = m - s*g(2)
+            e = this.energy(Array(n,l,m))
+            g = this.energy_gradient(Array(n,l,m))
+            println("Iter = " + i + ", Energy = " + f"$e%1.5f" + ", noiseSigma2 = " + f"$n%1.5f" + ", lengthScale = " + f"$l%1.5f" + ", magnSigma2 = " + f"$m%1.5f");
+        }
+        return Array(n,l,m)
     }
 }
